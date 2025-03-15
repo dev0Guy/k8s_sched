@@ -28,16 +28,25 @@ jobs:
           python -m pip install --upgrade pip
           python -c "import urllib.request; urllib.request.urlretrieve('https://install.python-poetry.org', 'install-poetry.py')"
           python install-poetry.py --version 1.8.2
-          echo "$USERPROFILE/.poetry/bin" >> $GITHUB_PATH
+          echo "$USERPROFILE\.poetry\bin" >> $GITHUB_PATH
+          echo "POETRY_BIN=$USERPROFILE\.poetry\bin" >> $GITHUB_ENV  # Store for later steps
         else
           curl -sSL https://install.python-poetry.org | python3 - --version 1.8.2
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "POETRY_BIN=$HOME/.local/bin" >> $GITHUB_ENV
         fi
       env:
-        POETRY_HOME: ${{ runner.os == 'Windows' && '$USERPROFILE/.poetry' || '/home/runner/.local' }}
+        POETRY_HOME: ${{ runner.os == 'Windows' && '$USERPROFILE\.poetry' || '/home/runner/.local' }}
 
     - name: Verify Poetry Installation
-      run: poetry --version
+      run: |
+        if [ "${{ runner.os }}" = "Windows" ]; then
+          dir "$env:POETRY_BIN" || echo "Poetry bin directory not found"
+          poetry --version || python -m poetry --version
+        else
+          ls -l "$POETRY_BIN" || echo "Poetry bin directory not found"
+          poetry --version
+        fi
 
     - name: Load cached venv
       id: cached-poetry-dependencies
@@ -48,15 +57,15 @@ jobs:
 
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: poetry install --no-interaction --no-root
+      run: python -m poetry install --no-interaction --no-root
 
     - name: Install project
-      run: poetry install --no-interaction
+      run: python -m poetry install --no-interaction
 
     - name: Run tests
       run: |
-        poetry run coverage run -m pytest tests/
-        poetry run coverage report
+        python -m poetry run coverage run -m pytest tests/
+        python -m poetry run coverage report
 
     - name: Show Poetry install error log (if failed)
       if: failure()
