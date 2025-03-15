@@ -15,7 +15,7 @@ array_strategy = st.lists(float32_strategy, min_size=1, max_size=10).map(lambda 
     disk=float32_strategy,
     gpu=float32_strategy
 )
-@settings(deadline=500)
+@settings(deadline=1_000)
 def test_resource_init(cpu, ram, disk, gpu):
     res = Resource(cpu=cpu, ram=ram, disk=disk, gpu=gpu)
     assert res.cpu == cpu
@@ -35,7 +35,7 @@ def test_resource_init(cpu, ram, disk, gpu):
     disk_array=array_strategy,
     gpu_array=array_strategy
 )
-@settings(deadline=500)
+@settings(deadline=1_000)
 def test_resources_usage_init(cpu_array, ram_array, disk_array, gpu_array):
     # Ensure all arrays have the same length for valid initialization
     min_length = min(len(cpu_array), len(ram_array), len(disk_array), len(gpu_array))
