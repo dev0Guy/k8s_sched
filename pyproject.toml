@@ -13,6 +13,7 @@ numba = "^0.61.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 hypothesis = "^6.129.2"
+pylint = "^3.3.5"
 
 [build-system]
 requires = ["poetry-core"]
