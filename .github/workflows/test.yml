@@ -24,14 +24,20 @@ jobs:
     - name: Install Poetry
       shell: bash
       run: |
-        curl -sSL https://install.python-poetry.org | python3 - --version 1.8.2
         if [ "${{ runner.os }}" = "Windows" ]; then
-          echo "$USERPROFILE/.local/bin" >> $GITHUB_PATH
+          python -m pip install --upgrade pip
+          python -c "import urllib.request; urllib.request.urlretrieve('https://install.python-poetry.org', 'install-poetry.py')"
+          python install-poetry.py --version 1.8.2
+          echo "$USERPROFILE/.poetry/bin" >> $GITHUB_PATH
         else
+          curl -sSL https://install.python-poetry.org | python3 - --version 1.8.2
           echo "$HOME/.local/bin" >> $GITHUB_PATH
         fi
       env:
-        POETRY_HOME: ${{ runner.os == 'Windows' && '$USERPROFILE/.local' || '/home/runner/.local' }}
+        POETRY_HOME: ${{ runner.os == 'Windows' && '$USERPROFILE/.poetry' || '/home/runner/.local' }}
+
+    - name: Verify Poetry Installation
+      run: poetry --version
 
     - name: Load cached venv
       id: cached-poetry-dependencies
@@ -54,4 +60,12 @@ jobs:
 
     - name: Show Poetry install error log (if failed)
       if: failure()
-      run: cat poetry-installer-error-*.log || echo "No log file found"
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" = "Windows" ]; then
+          dir poetry-installer-error-*.log 2>nul || echo "No log file found"
+          type poetry-installer-error-*.log 2>nul || echo "Log content not available"
+        else
+          ls -l poetry-installer-error-*.log 2>/dev/null || echo "No log file found"
+          cat poetry-installer-error-*.log 2>/dev/null || echo "Log content not available"
+        fi
