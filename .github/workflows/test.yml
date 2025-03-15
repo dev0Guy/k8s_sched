@@ -49,7 +49,7 @@ jobs:
 
     - name: Run tests
       run: |
-        poetry run pytest tests/
+        poetry run coverage run -m pytest tests/
         poetry run coverage report
 
     - name: Show Poetry install error log (if failed)
