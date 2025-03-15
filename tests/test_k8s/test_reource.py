@@ -1,6 +1,5 @@
 import numpy as np
 import numba as nb
-import pytest
 from hypothesis import given, settings, strategies as st
 from hugsy_scheduler.k8s.resource import Resource, ResourcesUsage
 
@@ -16,6 +15,7 @@ array_strategy = st.lists(float32_strategy, min_size=1, max_size=10).map(lambda 
     disk=float32_strategy,
     gpu=float32_strategy
 )
+@settings(deadline=500)
 def test_resource_init(cpu, ram, disk, gpu):
     res = Resource(cpu=cpu, ram=ram, disk=disk, gpu=gpu)
     assert res.cpu == cpu

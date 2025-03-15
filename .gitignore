@@ -174,3 +174,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/hugsy_scheduler/base/job.py
+/hugsy_scheduler/base/machine.py
+/hugsy_scheduler/base/proto.py
+/hugsy_scheduler/base/node.py
