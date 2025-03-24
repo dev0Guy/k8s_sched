@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "simulator"
+version = "0.1.0"
+description = ""
+authors = ["dev0Guy <97923827+dev0Guy@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+result = "^0.17.0"
+numba = "^0.61.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+hypothesis = "^6.130.2"
+ruff = "^0.11.2"
+isort = "^6.0.1"
+behave = "^1.2.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
