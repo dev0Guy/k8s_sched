@@ -8,12 +8,6 @@ from simulator.common.pod import Pod
 
 
 class FIFOScheduler(ABCK8sScheduler):
-    def pick(self, pods: Iterable[Pod]) -> Optional[Pod]:
-        """Pick the first pod from the iterable (FCFS)."""
-        try:
-            return next(self.prerequisites(pods))
-        except StopIteration:
-            return None
 
     def score(self, p: Pod, nodes: Iterable[Node]) -> Iterable[Tuple[Node, float]]:
         """Assign a simple score based on remaining capacity (higher is better)."""

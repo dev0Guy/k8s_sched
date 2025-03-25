@@ -15,8 +15,6 @@ class SchedulerProtocol(Protocol):
 
 class ABCK8sScheduler(ABC):
     @abstractmethod
-    def pick(self, pods: Iterable[Pod]) -> Optional[Pod]: ...
-    @abstractmethod
     def score(self, p: Pod, nodes: Iterable[Node]) -> Iterable[Tuple[Node, float]]: ...
 
     @abstractmethod
@@ -33,6 +31,13 @@ class ABCK8sScheduler(ABC):
     def filter(p: Pod, nodes: Iterable[Node]) -> Iterable[Node]:
         """Filter nodes that have enough remaining compute capacity for the pod's request."""
         return list(filter(lambda n: n.can_allocate(p.limit), nodes))
+
+    def pick(self, pods: Iterable[Pod]) -> Optional[Pod]:
+        """Pick the first pod from the iterable (FCFS)."""
+        try:
+            return next(self.prerequisites(pods))
+        except StopIteration:
+            return None
 
     def schedule(
         self, pods: Iterable[Pod], nodes: Iterable[Node]
