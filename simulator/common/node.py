@@ -19,8 +19,11 @@ class Node:
         self._name = f"{Node.__name__}_{Node._instance_count}"
         Node._instance_count += 1
 
-    def allocate(self, usage: npt.NDArray[np.float64]) -> None:
-        self._usage += usage
+    def allocate(self, asked_usage: npt.NDArray[np.float64]) -> None:
+        self._usage += asked_usage
+
+    def can_allocate(self, asked_usage) -> bool:
+        return bool(np.all(self.compute - self._usage >= asked_usage))
 
     @property
     def name(self) -> str:

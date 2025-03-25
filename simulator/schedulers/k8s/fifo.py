@@ -7,17 +7,13 @@ from simulator.common.node import Node
 from simulator.common.pod import Pod
 
 
-class FCFScheduler(ABCK8sScheduler):
+class FIFOScheduler(ABCK8sScheduler):
     def pick(self, pods: Iterable[Pod]) -> Optional[Pod]:
         """Pick the first pod from the iterable (FCFS)."""
         try:
             return next(self.prerequisites(pods))
         except StopIteration:
             return None
-
-    def filter(self, p: Pod, nodes: Iterable[Node]) -> Iterable[Node]:
-        """Filter nodes that have enough remaining compute capacity for the pod's request."""
-        return [node for node in nodes if np.all(node.compute - node.usage >= p.limit)]
 
     def score(self, p: Pod, nodes: Iterable[Node]) -> Iterable[Tuple[Node, float]]:
         """Assign a simple score based on remaining capacity (higher is better)."""
