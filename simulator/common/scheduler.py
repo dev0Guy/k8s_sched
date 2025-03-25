@@ -4,7 +4,7 @@ from typing import Iterable, Optional, Protocol, Tuple
 from result import Err, Ok, Result
 
 from simulator.common.node import Node
-from simulator.common.pod import Pod, PodStatus
+from simulator.common.pod import Pod, Status
 
 
 class SchedulerProtocol(Protocol):
@@ -24,7 +24,7 @@ class ABCK8sScheduler(ABC):
 
     @staticmethod
     def prerequisites(pods: Iterable[Pod]) -> Iterable[Pod]:
-        return filter(lambda p: p.status == PodStatus.PENDING, pods)
+        return filter(lambda p: p.status == Status.PENDING, pods)
 
     def schedule(
         self, pods: Iterable[Pod], nodes: Iterable[Node]
