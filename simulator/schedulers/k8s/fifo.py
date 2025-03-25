@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Tuple
+from typing import Tuple, List
 
 import numpy as np
 
@@ -9,13 +9,13 @@ from simulator.common.pod import Pod
 
 class FIFOScheduler(ABCK8sScheduler):
 
-    def score(self, p: Pod, nodes: Iterable[Node]) -> Iterable[Tuple[Node, float]]:
+    def score(self, p: Pod, nodes: List[Node]) -> List[Tuple[Node, float]]:
         """Assign a simple score based on remaining capacity (higher is better)."""
         return [(node, float(np.sum(node.free_compute - p.limit))) for node in nodes]
 
     def normalize(
-        self, nodes: Iterable[Tuple[Node, float]]
-    ) -> Iterable[Tuple[Node, float]]:
+        self, nodes: List[Tuple[Node, float]]
+    ) -> List[Tuple[Node, float]]:
         """Normalize scores to a 0-1 range using NumPy, compact version."""
         nodes_list = list(nodes)
         if not nodes_list:
