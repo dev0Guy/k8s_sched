@@ -8,16 +8,23 @@ import numpy.typing as npt
 @dataclass
 class Node:
     compute: Iterable[float]
-    name: str = field(init=False)
     _usage: npt.NDArray[np.float64] = field(init=False)
     _instance_count: int = 0
+    _name: str = field(init=False)
 
     def __post_init__(self):
         if isinstance(self.compute, np.ndarray):
             self.compute = self.compute.astype(np.float64)
         self._usage = np.zeros_like(self.compute)
-        self.name = f"node_{Node._instance_count}"
+        self._name = f"{Node.__name__}_{Node._instance_count}"
         Node._instance_count += 1
+
+    def allocate(self, usage: npt.NDArray[np.float64]) -> None:
+        self._usage += usage
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def usage(self) -> npt.NDArray[np.float64]:
