@@ -57,4 +57,4 @@ class Cluster:
                     self._inc_tick()
                 case Ok((p, n)):
                     p.status = Status.RUNNING
-                    n.allocate(p.limit)
+                    n.allocate(p)

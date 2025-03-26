@@ -29,7 +29,7 @@ class ABCK8sScheduler(ABC):
     @staticmethod
     def filter(p: Pod, nodes: List[Node]) -> List[Node]:
         """Filter nodes that have enough remaining compute capacity for the pod's request."""
-        return list(filter(lambda n: n.can_allocate(p.limit), nodes))
+        return list(filter(lambda n: n.can_allocate(p), nodes))
 
     def pick(self, pods: List[Pod]) -> Optional[Pod]:
         """Pick the first pod from the iterable (FCFS)."""
