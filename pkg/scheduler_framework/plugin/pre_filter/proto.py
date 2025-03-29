@@ -3,8 +3,8 @@ from typing import Protocol
 
 from cloudcoil.models.kubernetes.core.v1 import Pod
 
-from pkg.schedulers.base import Context, CycleState, Status, NodeNames
-from pkg.schedulers.plugin.proto import PluginProtocol
+from pkg.scheduler_framework.base import Context, CycleState, Status, NodeNames
+from pkg.scheduler_framework.plugin.proto import PluginProtocol
 from result import Result
 
 

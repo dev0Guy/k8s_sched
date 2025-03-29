@@ -2,11 +2,11 @@ from typing import Protocol, Tuple
 
 from cloudcoil.models.kubernetes.core.v1 import Pod
 
-from pkg.schedulers.base import Context, CycleState, Status
-from pkg.schedulers.plugin.proto import PluginProtocol
+from pkg.scheduler_framework.base import Context, CycleState, Status
+from pkg.scheduler_framework.plugin.proto import PluginProtocol
 
 
-class Score(PluginProtocol, Protocol):
+class ScorePlugin(PluginProtocol, Protocol):
     """
     These plugins are used to rank nodes that have passed the filtering phase.
     The scheduler will call each scoring plugin for each node.

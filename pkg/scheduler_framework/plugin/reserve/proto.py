@@ -2,11 +2,11 @@ from typing import Protocol
 
 from cloudcoil.models.kubernetes.core.v1 import Pod
 
-from pkg.schedulers.base import Context, CycleState, Status
-from pkg.schedulers.plugin.proto import PluginProtocol
+from pkg.scheduler_framework.base import Context, CycleState, Status
+from pkg.scheduler_framework.plugin.proto import PluginProtocol
 
 
-class Reserve(PluginProtocol, Protocol):
+class ReservePlugin(PluginProtocol, Protocol):
     """
         A plugin that implements the Reserve interface has two methods, namely Reserve and Unreserve,
          that back two informational scheduling phases called Reserve and Unreserve, respectively.
