@@ -1,4 +1,5 @@
-from typing import Protocol
+from abc import abstractmethod
+from typing import Protocol, List
 
 from cloudcoil.models.kubernetes.core.v1 import Pod
 
@@ -12,4 +13,8 @@ class QueueSortPlugin(PluginProtocol, Protocol):
         Only one queue sort plugins may be enabled at a time.
     """
 
+    @abstractmethod
     def less(self, p1: Pod, p2: Pod) -> bool: ...
+
+    def sort(self, pods: List[Pod]) -> List[Pod]:
+        return pods

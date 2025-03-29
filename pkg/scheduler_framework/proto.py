@@ -1,33 +1,44 @@
-from typing import Generic
-from dataclasses import dataclass, field
-from pkg.scheduler_framework.plugins import (
-    QueueSortPlugin,
-    PreFilterPlugin,
-    FilterPlugin,
-    PostFilterPlugin,
-    PreScorePlugin,
-    ScorePlugin,
-    NormalizeScorePlugin,
-    ReservePlugin,
-    PermitPlugin,
-    Plugin
-)
+import abc
+import asyncio
+from typing import Optional, List, Tuple, Iterable
+
+from cloudcoil.models.kubernetes.core.v1 import Pod, Node, PodStatus
+from cloudcoil.resources import ResourceList
+from pydantic import NonNegativeInt
+from result import Result
+
+from pkg.scheduler_framework.base import SimulatorAnnotation
+from plugins import Plugins  # noqa: F401
 
 
-@dataclass(frozen=True)
-class PluginSet(Generic[Plugin]):
-    enabled: list[Plugin] = field(default_factory=list)
-    disabled: list[Plugin] = field(default_factory=list)
+def get_pods_by_status(status: str, *, should_wait: bool = False) -> List[Pod]:
+    filed_selector = "status.phase={}".format(status)
+    if should_wait:
+        _ = next(Pod.watch(field_selector=filed_selector))
+    return Pod.list(field_selector=filed_selector).items
 
 
-@dataclass
-class Plugins:
-    queue_sort: PluginSet[QueueSortPlugin] = field(default_factory=list)
-    prefilter: PluginSet[PreFilterPlugin] = field(default_factory=list)
-    filter: PluginSet[FilterPlugin] = field(default_factory=list)
-    post_filter: PluginSet[PostFilterPlugin] = field(default_factory=list)
-    pre_score: PluginSet[PreScorePlugin] = field(default_factory=list)
-    score: PluginSet[ScorePlugin] = field(default_factory=list)
-    normalize_score: PluginSet[NormalizeScorePlugin] = field(default_factory=list)
-    reserve: PluginSet[ReservePlugin] = field(default_factory=list)
-    permit: PluginSet[PermitPlugin] = field(default_factory=list)
+class AbstractScheduler(abc.ABC):
+    _current_tick: NonNegativeInt
+
+    @abc.abstractmethod
+    def schedule(self) -> Result[Tuple[Pod, Node], Exception]: ...
+
+    @classmethod
+    def get_simulator_annotation(cls, p: Pod) -> SimulatorAnnotation:
+        return SimulatorAnnotation(**p.metadata.annotations)
+
+    def clock_forward(self) -> None:
+        """Move all pods time_running +1 and update all of their status"""
+        running_pods_annotation = map(self.get_simulator_annotation, get_pods_by_status("Running"))
+
+        # TODO: update annotation by tick
+        # when completed change the pod status
+        # check for arriving jobs and submit them on install
+        #
+        # for p in running_pods_annotation:
+        #     if p.length == p.time_running:
+        #         p.completed_at = self._current_tick
+        #     else:
+        #         p.time_running += 1
+

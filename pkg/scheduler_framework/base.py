@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
 import time
 import enum
-from typing import List, Optional, Set, Dict
+from typing import List, Optional, Set, Dict, Callable
+
+from pydantic import BaseModel, NonNegativeInt, ConfigDict, Field
 
 NodeNames = Set[str]
 
@@ -44,6 +46,23 @@ class Status:
 
     def is_rejected(self) -> bool:
         return self.code in (Code.Unschedulable, Code.UnschedulableAndUnresolvable, Code.Pending)
+
+
+def prefix_alias_generator(prefix: str) -> Callable[[str], str]:
+    def inner(name: str) -> str:
+        return f'{prefix}{name}'
+    return inner
+
+class SimulatorAnnotation(BaseModel):
+    running_tick_count: NonNegativeInt = Field(alias="runningTickCount")
+    length: NonNegativeInt = Field(alias="length")
+    scheduled_at_tick: Optional[NonNegativeInt] = Field(alias="scheduledAtTick", default=None)
+    completed_at_tick: Optional[NonNegativeInt] = Field(alias="completedAtTick", default=None)
+
+    model_config = ConfigDict(
+        alias_generator=prefix_alias_generator('simulator.'),
+        extra='allow'
+    )
 
 
 NodeToStatus = Dict[str, Status]
