@@ -1,6 +1,6 @@
 from typing import Generic
 from dataclasses import dataclass, field
-from pkg.scheduler_framework.plugin import (
+from pkg.scheduler_framework.plugins import (
     QueueSortPlugin,
     PreFilterPlugin,
     FilterPlugin,

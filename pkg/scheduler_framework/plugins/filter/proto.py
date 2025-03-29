@@ -4,7 +4,7 @@ from typing import Protocol
 from cloudcoil.models.kubernetes.core.v1 import NodeSystemInfo
 
 from pkg.scheduler_framework.base import CycleState, Status, Context
-from pkg.scheduler_framework.plugin.proto import PluginProtocol
+from pkg.scheduler_framework.plugins.proto import PluginProtocol
 from simulator.common import Pod
 
 
@@ -12,7 +12,7 @@ class FilterPlugin(PluginProtocol, Protocol):
     """
     These plugins are used to filter out nodes that cannot run the Pod.
     For each node, the scheduler will call filter plugins in their configured order.
-    If any filter plugin marks the node as infeasible, the remaining plugins will not be called for that node.
+    If any filter plugins marks the node as infeasible, the remaining plugins will not be called for that node.
     Nodes may be evaluated concurrently.
     """
     @abstractmethod
